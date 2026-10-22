@@ -1,0 +1,51 @@
+# Handoff: TAMU Events Aggregator / Scraper
+
+**Status:** The deep-research run stopped before finishing, so nothing below is source-verified. It comes from general knowledge. Verify every endpoint and ToS claim marked (VERIFY) before building on it. The first task for the next session is to check them quickly.
+
+## Goal
+Pull Texas A&M events (official, student org, startup/tech/gaming, career, social) into one normalized feed for our app.
+
+## Source list, ranked by value and ease
+
+| # | Source | Likely method | Difficulty | Risk |
+|---|---|---|---|---|
+| 1 | Official TAMU calendar (calendar.tamu.edu, likely Localist) (VERIFY) | Localist public API (/api/2/events), plus iCal/RSS feeds | Easy | Low |
+| 2 | Aggie Involvement (student org platform, likely Anthology Engage) (VERIFY) | Public event pages, RSS/iCal if exposed; otherwise page scrape | Easy-Medium | Low-Med |
+| 3 | College/department calendars (Mays, Engineering, Bush, etc.) and Texas A&M Today | iCal/RSS/JSON, or HTML scrape per site | Easy | Low |
+| 4 | Luma (lu.ma / luma.com) calendars for A&M orgs (Aggies Create, AggieX, Meloy, Game Devs, etc.) | Per-calendar iCal (.ics) subscribe URL; event pages embed JSON (e.g. __NEXT_DATA__); official API is likely paid-tier and only for your own calendars (VERIFY) | Easy-Medium | Low-Med |
+| 5 | Athletics (12thman.com, likely Sidearm) | iCal schedule export or schedule pages | Easy | Low |
+| 6 | Eventbrite / Meetup / Partiful | Eventbrite API (search by location was deprecated, so go by organizer ID); others via public pages (VERIFY) | Medium | Med |
+| 7 | Local calendars (Visit College Station, City of College Station, The Eagle, Brazos Valley) | RSS/iCal or HTML scrape | Easy | Low |
+| 8 | Instagram (student org accounts) | See below | Hard / brittle | High (ToS) |
+| 9 | LinkedIn (org pages and event posts) | See below | Very hard | Very high (ToS) |
+| 10 | Handshake, Discord, GroupMe, Facebook Events | Login-walled or private; do not scrape | n/a | n/a |
+
+## Instagram
+- Official route: the Meta Graph API only gives full access to accounts you own or that authorize your app. Business Discovery can read public media from other business/creator accounts, but only captions and images, with no structured event data. Org opt-in (OAuth) is the clean option (VERIFY).
+- Scraping is possible but breaks often (login walls, rate limits, IP bans) and violates Instagram's ToS.
+- Practical approach: a small curated list of org handles, then run flyer images and captions through an LLM vision/text extraction step to get title/date/time/location. Do this on opt-in or manually submitted posts first.
+
+## LinkedIn
+- No public events API. Scraping violates the ToS and is actively blocked (accounts and IPs get banned).
+- Recommendation: skip it. Use org submissions, a "submit an event" form, or manual paste of event links, then parse with an LLM.
+
+## Recommended architecture
+1. **Connectors**, one per source, each emitting a common schema: `source, source_id, title, description, start, end, tz, location_name, address, org, url, image_url, tags, scraped_at`.
+2. **Ingest tiers:** (a) feeds/APIs (iCal/RSS/Localist/Luma .ics), (b) HTML/JSON scraping with Playwright or httpx+selectolax, (c) LLM extraction from flyers/captions, (d) user/org submissions.
+3. **Normalize and dedupe:** dedupe key = fuzzy title + start time + location. The same event often appears on the TAMU calendar, Luma, and Instagram. Merge, keeping the official source as canonical.
+4. **Store** in Postgres (upsert on source+source_id), run on a scheduler (cron or a queue) every 1-6 hours, and log failures per connector so a broken scraper is easy to spot.
+5. **Politeness:** respect robots.txt, rate limit, identify the user agent, cache with ETags. Prefer feeds over scraping wherever one exists.
+
+## Phased plan
+- **Phase 1 (build first, 1 session):** TAMU official calendar + Luma .ics feeds for target orgs + 12thman. Schema, DB, scheduler, dedupe.
+- **Phase 2:** Aggie Involvement, college/department calendars, Eventbrite, local calendars.
+- **Phase 3:** Instagram via curated handles and LLM flyer extraction, ideally opt-in. Add an event submission form.
+- **Skip or defer:** LinkedIn, Handshake, Discord/GroupMe.
+
+## First prompt for the vibe-coding session
+"Build a Python event aggregator for Texas A&M. First, verify whether calendar.tamu.edu exposes a Localist API or iCal/RSS feed and find Luma .ics URLs for these orgs: [list]. Define a normalized Event schema, write connectors for each verified feed, store in SQLite/Postgres with upsert and fuzzy dedupe (title+start+location), run on a schedule, and log per-connector errors. Add an Instagram connector stub that takes a list of handles and uses an LLM to extract event fields from captions/flyers."
+
+## Open questions for the user
+- Which orgs/Luma calendars matter most (startup, gaming, Mays/Meloy, Aggies Create)?
+- App stack (web or mobile; backend language)?
+- Is opt-in from orgs acceptable for Instagram, or must it be fully passive?
