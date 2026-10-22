@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Commons: campus events</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F5FA;--surface:#fff;--ink:#17204A;--muted:#5B6385;--line:#DADDEC;--accent:#2F4BFF;--onaccent:#fff;
+--c1:#F2574A;--c2:#2F4BFF;--c3:#0E9F7E;--c4:#D99A00;--c5:#9B5DE5;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10152E;--surface:#1A2142;--ink:#EEF0FB;--muted:#9AA3CC;--line:#2C3560;--accent:#7C90FF;--onaccent:#10152E;
+--c1:#FF8A7E;--c2:#7C90FF;--c3:#3CCBA6;--c4:#F2BE3A;--c5:#BE93F5;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10152E;--surface:#1A2142;--ink:#EEF0FB;--muted:#9AA3CC;--line:#2C3560;--accent:#7C90FF;--onaccent:#10152E;
+--c1:#FF8A7E;--c2:#7C90FF;--c3:#3CCBA6;--c4:#F2BE3A;--c5:#BE93F5;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Figtree,system-ui,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+h1,h2,h3{font-family:"Bricolage Grotesque",Figtree,sans-serif;margin:0;line-height:1.15}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+h1{font-size:32px;font-weight:800;letter-spacing:-.02em}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.primary{background:var(--accent);color:var(--onaccent);border:0;border-radius:10px;padding:10px 16px;font-weight:600}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.tabs button{background:none;border:0;padding:10px 14px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+.rail{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:6px}
+.day{flex:0 0 auto;min-width:62px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px 6px;text-align:center}
+.day b{display:block;font:800 24px/1.1 "Bricolage Grotesque",sans-serif}
+.day span{font-size:13px;color:var(--muted)}
+.day i{display:flex;justify-content:center;gap:3px;height:6px;margin-top:5px}
+.day i u{width:6px;height:6px;border-radius:50%;background:var(--cc)}
+.day[aria-pressed="true"]{background:var(--ink);border-color:var(--ink)}
+.day[aria-pressed="true"] b{color:var(--bg)}.day[aria-pressed="true"] span{color:var(--bg);opacity:.8}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.tools input{flex:1 1 200px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;font-size:14px;display:flex;align-items:center;gap:6px}
+.chip i{width:9px;height:9px;border-radius:50%;background:var(--cc)}
+.chip[aria-pressed="true"]{border-color:var(--ink);font-weight:600}
+h2{font-size:20px;margin:22px 0 10px}
+.ev{display:grid;grid-template-columns:78px 1fr auto;gap:4px 14px;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--cc);border-radius:12px;padding:14px;margin-bottom:10px}
+.tm{font:800 18px/1.2 "Bricolage Grotesque",sans-serif}
+.tm small{display:block;font:400 13px Figtree,sans-serif;color:var(--muted);margin-top:2px}
+.ev h3{font-size:18px;margin-bottom:4px}
+.ev p{margin:0 0 3px;font-size:15px}
+.ev .mt{color:var(--muted);font-size:14px}
+.ev .tag{font-size:13px;margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ev .tag i{width:9px;height:9px;border-radius:50%;background:var(--cc)}
+.warn{color:var(--c1);font-weight:600}
+.act{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.go{border:1.5px solid var(--accent);background:none;color:var(--accent);border-radius:10px;padding:8px 12px;font-weight:600;white-space:nowrap}
+.go.on{background:var(--accent);color:var(--onaccent)}
+.ct{font-size:13px;color:var(--muted)}
+.empty{text-align:center;padding:36px 12px;color:var(--muted)}
+.empty h3{color:var(--ink);margin-bottom:6px}
+dialog{border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);width:min(440px,92vw);padding:20px}
+dialog::backdrop{background:rgba(10,14,40,.55)}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+dialog input,dialog select,dialog textarea{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 10px}
+.row{display:flex;gap:10px}.row>div{flex:1}
+.btns{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.btns .ghost{background:none;border:1px solid var(--line);border-radius:10px;padding:10px 16px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.show{opacity:1}
+@media (max-width:520px){.ev{grid-template-columns:1fr auto}.tm{grid-column:1/-1;display:flex;gap:8px;align-items:baseline}.tm small{margin:0}}
+#mapbox svg{width:100%;height:auto;display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-top:8px}
+.grass{fill:var(--c3);opacity:.14}.plaza{fill:var(--line)}.lake{fill:var(--c2);opacity:.18}.road{stroke:var(--line);stroke-width:10;fill:none}
+.lbl{font:500 12px Figtree,sans-serif;fill:var(--muted);paint-order:stroke;stroke:var(--surface);stroke-width:3px}.lbl.on{fill:var(--ink);font-weight:600}
+.num{font:800 13px "Bricolage Grotesque",sans-serif;fill:var(--ink)}.off{fill:var(--line)}.inner{fill:var(--surface)}
+.pin{cursor:pointer}.pin .dot{stroke:var(--surface);stroke-width:3px}.pin.sel .dot{stroke:var(--ink);stroke-width:4px}
+.pin:focus{outline:none}.pin:focus-visible .dot{stroke:var(--accent);stroke-width:5px}
+.view{display:flex}.view button{border:1px solid var(--line);background:var(--surface);padding:8px 14px;font-weight:600}
+.view button:first-child{border-radius:10px 0 0 10px}.view button:last-child{border-radius:0 10px 10px 0;border-left:0}
+.view button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.calbar{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:12px 0 4px;font-size:14px;color:var(--muted)}
+.calbar button{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 12px;font-weight:600}
+details.cal{margin-top:6px;font-size:14px}details.cal summary{cursor:pointer;color:var(--accent);font-weight:600}
+details.cal a{display:inline-block;margin:6px 12px 0 0;color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Commons</h1>
+    <button class="primary" id="post">Post an event</button>
+  </header>
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-disc" aria-selected="true">Discover</button>
+    <button role="tab" id="t-plans" aria-selected="false">My plans (<span id="pc">0</span>)</button>
+  </div>
+  <div class="rail" id="rail" aria-label="Filter by day"></div>
+  <div class="tools">
+    <input id="q" type="search" placeholder="Search events, places, hosts" aria-label="Search events">
+    <div class="view"><button data-view="list" aria-pressed="true">List</button><button data-view="map" aria-pressed="false">Map</button></div>
+  </div>
+  <div class="chips" id="chips" aria-label="Filter by category"></div>
+  <div class="calbar"><button id="calbtn">Import my calendar</button><input id="ics" type="file" accept=".ics,text/calendar" hidden><button id="calclr" hidden>Clear</button><span id="calst"></span></div>
+  <div id="mapbox" hidden></div>
+  <main id="list"></main>
+</div>
+
+<dialog id="dlg">
+  <h2 style="margin-top:0">Post an event</h2>
+  <form id="form">
+    <label for="f-t">Event name</label><input id="f-t" required maxlength="80">
+    <div class="row">
+      <div><label for="f-d">Day</label><select id="f-d"></select></div>
+      <div><label for="f-h">Start time</label><input id="f-h" type="time" value="18:00" required></div>
+    </div>
+    <div class="row">
+      <div><label for="f-c">Category</label><select id="f-c"></select></div>
+      <div><label for="f-m">Length (minutes)</label><input id="f-m" type="number" min="15" step="15" value="60" required></div>
+    </div>
+    <div class="row"><div><label for="f-p">Where</label><select id="f-p"></select></div><div><label for="f-r">Room or detail</label><input id="f-r" maxlength="40"></div></div>
+    <label for="f-x">What to expect</label><textarea id="f-x" rows="3" maxlength="200"></textarea>
+    <div class="btns"><button type="button" class="ghost" id="cancel">Cancel</button><button class="primary">Post event</button></div>
+  </form>
+</dialog>
+<div id="toast" role="status"></div>
+
+<script>
+var cats={Social:'--c1',Career:'--c2',Academic:'--c3',Sports:'--c4',Arts:'--c5'};
+var base=new Date();base.setHours(0,0,0,0);
+function at(n,h,m){var x=new Date(base);x.setDate(x.getDate()+n);x.setHours(h,m||0,0,0);return x}
+var events=[
+{id:1,t:'Resume lab for engineering internships',cat:'Career',when:at(0,17),dur:90,place:'Student Union, Room 204',host:'Career Center',going:48,desc:'Bring a draft. Recruiters and alumni give live feedback.'},
+{id:2,t:'Open mic night',cat:'Arts',when:at(0,19,30),dur:120,place:'Coffeehouse on the Quad',host:'Spoken Word Society',going:63,desc:'Poetry, music, comedy. Sign up at the door or just listen.'},
+{id:3,t:'Intramural flag football: week 6',cat:'Sports',when:at(1,18),dur:60,place:'Recreation Fields 3 and 4',host:'Campus Rec',going:90,desc:'Check your team’s field on the bracket. Bring a water bottle.'},
+{id:4,t:'Calculus II study jam',cat:'Academic',when:at(1,19),dur:150,place:'Library, 3rd floor',host:'Math Tutoring Collective',going:34,desc:'Tutors on hand for the midterm review. Snacks provided.'},
+{id:5,t:'Club fair: fall second round',cat:'Social',when:at(2,11),dur:180,place:'Main Plaza',host:'Student Activities',going:210,desc:'Over 80 clubs recruiting. Find one that fits your schedule.'},
+{id:6,t:'Film night: student shorts',cat:'Arts',when:at(2,20),dur:100,place:'Fine Arts Theater',host:'Film Society',going:57,desc:'Eight shorts made by students, followed by a Q&A.'},
+{id:7,t:'Networking mixer: business and tech',cat:'Career',when:at(3,17,30),dur:120,place:'Alumni Center',host:'Business Student Council',going:120,desc:'Meet employers in a relaxed setting. Business casual.'},
+{id:8,t:'5K fun run for charity',cat:'Sports',when:at(4,8),dur:90,place:'Lakeside Trail',host:'Running Club',going:76,desc:'All paces welcome. Proceeds go to the campus food pantry.'},
+{id:9,t:'Research symposium poster session',cat:'Academic',when:at(4,13),dur:120,place:'Science Building Atrium',host:'Undergraduate Research Office',going:41,desc:'Students present their projects. Ask them anything.'},
+{id:10,t:'Homecoming bonfire and pep rally',cat:'Social',when:at(5,19),dur:120,place:'Lot 12 field',host:'Student Government',going:540,desc:'Marching band, spirit chants, free hot chocolate.'},
+{id:11,t:'Pottery drop-in',cat:'Arts',when:at(6,14),dur:120,place:'Art Annex, Studio B',host:'Ceramics Club',going:18,desc:'No experience needed. Clay and tools are provided.'},
+{id:12,t:'Pickup basketball',cat:'Sports',when:at(6,16),dur:120,place:'Recreation Center, Court 2',host:'Campus Rec',going:25,desc:'Show up, split into teams, play to 11.'}
+];
+var going={},tab='disc',day=null,cat=null,q='',nextId=100;
+try{(JSON.parse(localStorage.getItem('commons-going')||'[]')).forEach(function(i){going[i]=1})}catch(e){}
+var $=function(id){return document.getElementById(id)};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function fmt(d){return d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}
+function dayIdx(d){return Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-base)/864e5)}
+function label(i){if(i===0)return'Today';if(i===1)return'Tomorrow';var x=at(i,0);return x.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})}
+function end(e){return new Date(+e.when+e.dur*6e4)}
+var PL={'Student Union':[300,100],'Library':[170,110],'Alumni Center':[450,90],'Fine Arts Theater':[520,190],'Science Building':[110,200],'Main Plaza':[300,200],'Coffeehouse on the Quad':[230,290],'Art Annex':[440,300],'Recreation Center':[520,350],'Recreation Fields':[380,375],'Lot 12 field':[250,385],'Lakeside Trail':[100,330]};
+var busy=[],view='list',mapSel=null,enc=encodeURIComponent;
+function locOf(p){return Object.keys(PL).filter(function(n){return p.indexOf(n)===0}).sort(function(a,b){return b.length-a.length})[0]}
+function utc(d){return d.toISOString().replace(/[-:]|\.\d{3}/g,'')}
+function calLinks(e){
+  var g='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+enc(e.t)+'&dates='+utc(e.when)+'/'+utc(end(e))+'&location='+enc(e.place)+'&details='+enc(e.desc+' Hosted by '+e.host);
+  var o='/calendar/0/deeplink/compose?path=%2Fcalendar%2Faction%2Fcompose&rru=addevent&subject='+enc(e.t)+'&startdt='+enc(e.when.toISOString())+'&enddt='+enc(end(e).toISOString())+'&location='+enc(e.place)+'&body='+enc(e.desc);
+  return '<a href="'+esc(g)+'" target="_blank" rel="noopener">Google Calendar</a><a href="'+esc('https://outlook.live.com'+o)+'" target="_blank" rel="noopener">Outlook.com</a><a href="'+esc('https://outlook.office.com'+o)+'" target="_blank" rel="noopener">Microsoft 365</a>'
+}
+function pdate(v){
+  var m=/^(\d{4})(\d\d)(\d\d)(?:T(\d\d)(\d\d)(\d\d)?(Z)?)?$/.exec(v);if(!m)return null;
+  if(m[4]===undefined)return new Date(+m[1],m[2]-1,+m[3]);
+  var a=[+m[1],m[2]-1,+m[3],+m[4],+m[5],+(m[6]||0)];
+  return m[7]?new Date(Date.UTC.apply(null,a)):new Date(a[0],a[1],a[2],a[3],a[4],a[5])
+}
+function parseIcs(txt){
+  var out=[];
+  txt.replace(/\r?\n[ \t]/g,'').split('BEGIN:VEVENT').slice(1).forEach(function(b){
+    var g=function(k){var m=new RegExp('^'+k+'[^:\\r\\n]*:(.*)$','m').exec(b);return m?m[1].trim():''};
+    var s=pdate(g('DTSTART')),e=pdate(g('DTEND'));if(!s)return;
+    if(!e)e=new Date(+s+(g('DTSTART').length===8?864e5:36e5));
+    out.push({s:s,e:e,t:g('SUMMARY').replace(/\\([,;])/g,'$1')||'Busy'})
+  });
+  return out
+}
+function clash(e){return busy.filter(function(b){return b.s<end(e)&&e.when<b.e})[0]}
+function clashTxt(e){var b=clash(e);return b?'<span class="warn">Clashes with “'+esc(b.t)+'” on your calendar</span>':''}
+function calUI(){
+  document.querySelectorAll('[data-view]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.view===view)});
+  $('calst').textContent=busy.length?'Checking against '+busy.length+' events from your calendar. Repeating events aren’t expanded.':'Import an .ics export of your calendar to flag clashes.';
+  $('calclr').hidden=!busy.length
+}
+function mapHtml(list){
+  var by={};list.forEach(function(e){var k=locOf(e.place);if(k)(by[k]=by[k]||[]).push(e)});
+  var s='<svg viewBox="0 0 600 430" role="group" aria-label="Campus map"><rect class="grass" x="190" y="248" width="190" height="96" rx="14"/><rect class="plaza" x="250" y="172" width="100" height="56" rx="10"/><ellipse class="lake" cx="110" cy="352" rx="78" ry="34"/><path class="road" d="M40 150H560M300 40V420M40 270H560"/>';
+  Object.keys(PL).forEach(function(n){
+    var p=PL[n],ev=by[n];
+    if(ev){s+='<g class="pin'+(mapSel===n?' sel':'')+'" data-loc="'+esc(n)+'" tabindex="0" role="button" aria-label="'+esc(n)+', '+ev.length+(ev.length===1?' event':' events')+'"><circle class="dot" cx="'+p[0]+'" cy="'+p[1]+'" r="16" style="fill:var('+cats[ev[0].cat]+')"/><circle class="inner" cx="'+p[0]+'" cy="'+p[1]+'" r="9"/><text class="num" x="'+p[0]+'" y="'+(p[1]+4.5)+'" text-anchor="middle">'+ev.length+'</text><text class="lbl on" x="'+p[0]+'" y="'+(p[1]+34)+'" text-anchor="middle">'+esc(n)+'</text></g>'}
+    else{s+='<g><circle class="off" cx="'+p[0]+'" cy="'+p[1]+'" r="5"/><text class="lbl" x="'+p[0]+'" y="'+(p[1]+20)+'" text-anchor="middle">'+esc(n)+'</text></g>'}
+  });
+  return s+'</svg>'
+}
+function placeStr(){var r=$('f-r').value.trim();return $('f-p').value+(r?', '+r:'')}
+$('f-p').innerHTML=Object.keys(PL).map(function(n){return'<option>'+esc(n)+'</option>'}).join('');
+function pick(ev){
+  var g=ev.target.closest('[data-loc]');if(!g)return;
+  if(ev.type==='keydown'&&ev.key!=='Enter'&&ev.key!==' ')return;
+  ev.preventDefault();mapSel=g.dataset.loc;render();
+  if(ev.type==='keydown'){var f=$('mapbox').querySelector('.sel');if(f)f.focus()}
+}
+$('mapbox').addEventListener('click',pick);$('mapbox').addEventListener('keydown',pick);
+$('ics').addEventListener('change',function(ev){
+  var f=ev.target.files[0];if(!f)return;
+  f.text().then(function(t){busy=parseIcs(t);toast(busy.length?'Calendar imported':'No events found in that file');render()}).catch(function(){toast('Couldn’t read that file. Choose an .ics export.')})
+});
+function save(){try{localStorage.setItem('commons-going',JSON.stringify(Object.keys(going).map(Number)))}catch(e){}}
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(function(){t.classList.remove('show')},1800)}
+
+function overlap(e){
+  var o=events.filter(function(x){return x.id!==e.id&&going[x.id]&&x.when<end(e)&&e.when<end(x)})[0];
+  return o?'<span class="warn">Overlaps with '+esc(o.t)+'</span>':''
+}
+function card(e){
+  var on=!!going[e.id];
+  return '<article class="ev" style="--cc:var('+cats[e.cat]+')"><div class="tm">'+fmt(e.when)+'<small>'+e.dur+' min</small></div>'+
+  '<div><h3>'+esc(e.t)+'</h3><p class="mt">'+esc(e.place)+'</p><p class="mt">Hosted by '+esc(e.host)+'</p><p>'+esc(e.desc)+'</p>'+
+  '<p class="tag"><i></i>'+e.cat+(tab==='plans'&&on?overlap(e):'')+clashTxt(e)+'</p><details class="cal"><summary>Add to calendar</summary>'+calLinks(e)+'</details></div>'+
+  '<div class="act"><button class="go'+(on?' on':'')+'" data-go="'+e.id+'" aria-pressed="'+on+'">'+(on?'In my plans':'Add to plans')+'</button><span class="ct">'+(e.going+(on?1:0))+' going</span></div></article>'
+}
+function visible(){
+  var s=q.toLowerCase();
+  return events.filter(function(e){
+    if(tab==='plans'&&!going[e.id])return false;
+    if(cat&&e.cat!==cat)return false;
+    if(tab==='disc'&&day!==null&&dayIdx(e.when)!==day)return false;
+    if(s&&(e.t+e.place+e.host+e.desc).toLowerCase().indexOf(s)<0)return false;
+    return true
+  }).sort(function(a,b){return a.when-b.when})
+}
+function render(){
+  $('pc').textContent=Object.keys(going).filter(function(i){return events.some(function(e){return e.id==i})}).length;
+  $('t-disc').setAttribute('aria-selected',tab==='disc');$('t-plans').setAttribute('aria-selected',tab==='plans');
+  $('rail').style.display=tab==='disc'?'flex':'none';
+  var r='<button class="day" data-day="" aria-pressed="'+(day===null)+'"><b>All</b><span>week</span><i></i></button>';
+  for(var i=0;i<7;i++){
+    var x=at(i,0),n=events.filter(function(e){return dayIdx(e.when)===i});
+    r+='<button class="day" data-day="'+i+'" aria-pressed="'+(day===i)+'"><b>'+x.getDate()+'</b><span>'+x.toLocaleDateString([],{weekday:'short'})+'</span><i>'+n.slice(0,4).map(function(e){return'<u style="--cc:var('+cats[e.cat]+')"></u>'}).join('')+'</i></button>'
+  }
+  $('rail').innerHTML=r;
+  $('chips').innerHTML=Object.keys(cats).map(function(c){return'<button class="chip" style="--cc:var('+cats[c]+')" data-cat="'+c+'" aria-pressed="'+(cat===c)+'"><i></i>'+c+'</button>'}).join('');
+  var list=visible(),h='',last=-1;
+  $('mapbox').hidden=view!=='map'||!list.length;
+  if(view==='map'){
+    $('mapbox').innerHTML=mapHtml(list);
+    var here=list.filter(function(e){return locOf(e.place)===mapSel});
+    if(!here.length)mapSel=null;
+    h=mapSel?'<h2>'+esc(mapSel)+'</h2>'+here.map(function(e){return card(e)}).join(''):'<p class="empty">Select a numbered pin to see the events there.</p>'
+  }else{
+    list.forEach(function(e){var d=dayIdx(e.when);if(d!==last){h+='<h2>'+label(d)+'</h2>';last=d}h+=card(e)})
+  }
+  if(!list.length){
+    h=tab==='plans'?'<div class="empty"><h3>Your plans are empty</h3><p>Pick events in Discover and they will show up here, with any time conflicts flagged.</p></div>'
+      :'<div class="empty"><h3>No events match</h3><p>Try another day or category, or post one yourself.</p></div>'
+  }
+  $('list').innerHTML=h;calUI()
+}
+document.addEventListener('click',function(ev){
+  var t=ev.target.closest('button');if(!t)return;
+  if(t.dataset.go){var id=t.dataset.go;if(going[id]){delete going[id];toast('Removed from plans')}else{going[id]=1;toast('Added to plans')}save();render()}
+  else if(t.dataset.cat){cat=cat===t.dataset.cat?null:t.dataset.cat;render()}
+  else if(t.hasAttribute('data-day')){day=t.dataset.day===''?null:+t.dataset.day;render()}
+  else if(t.id==='t-disc'){tab='disc';render()}
+  else if(t.id==='t-plans'){tab='plans';render()}
+  else if(t.dataset.view){view=t.dataset.view;render()}
+  else if(t.id==='calbtn'){$('ics').click()}
+  else if(t.id==='calclr'){busy=[];$('ics').value='';render()}
+});
+$('q').addEventListener('input',function(e){q=e.target.value;render()});
+$('post').onclick=function(){$('dlg').showModal()};
+$('cancel').onclick=function(){$('dlg').close()};
+$('f-d').innerHTML=[0,1,2,3,4,5,6].map(function(i){return'<option value="'+i+'">'+label(i)+'</option>'}).join('');
+$('f-c').innerHTML=Object.keys(cats).map(function(c){return'<option>'+c+'</option>'}).join('');
+$('form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var hm=$('f-h').value.split(':'),id=nextId++;
+  events.push({id:id,t:$('f-t').value.trim(),cat:$('f-c').value,when:at(+$('f-d').value,+hm[0],+hm[1]),dur:+$('f-m').value,place:placeStr(),host:'You',going:0,desc:$('f-x').value.trim()||'No description yet.'});
+  going[id]=1;$('form').reset();$('dlg').close();tab='disc';day=null;cat=null;q='';$('q').value='';render();toast('Event posted')
+});
+render();
+</script>
+</body>
+</html>
